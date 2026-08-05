@@ -9,22 +9,21 @@ type Props = {
 };
 
 export const metadata: Metadata = {
-  title: "Viajeromex | Rutas Culinarias y Experiencias de Sabor",
-  description: "Explora México a través de su gastronomía. Desde joyas de comida callejera hasta cenas exclusivas, en Viajeromex diseñamos viajes y catas a medida que despertarán todos tus sentidos.",
+  title: "Oasix | Rutas Culinarias y Experiencias de Sabor",
+  description:
+    "Descubre México por medio de su riqueza gastronómica. Desde rincones de comida callejera hasta cenas únicas, en Oasix creamos viajes y degustaciones a medida que cautivarán cada uno de tus sentidos.",
 };
 
 export default async function RootLayout({
   children,
-  params
+  params,
 }: Props) {
   const resolvedParams = await params;
   const locale = resolvedParams.locale;
 
   return (
     <html lang={locale}>
-      <ClientBody locale={locale}>
-        {children}
-      </ClientBody>
+      <ClientBody locale={locale}>{children}</ClientBody>
     </html>
   );
 }

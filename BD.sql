@@ -2,34 +2,34 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- =====================================================================================
--- 1. LIMPIEZA PREVIA (Namespace Viajeromex)
+-- 1. LIMPIEZA PREVIA (Namespace Oasix)
 -- =====================================================================================
-DROP TABLE IF EXISTS public.booking_items_vm CASCADE;
-DROP TABLE IF EXISTS public.cart_items_vm CASCADE;
-DROP TABLE IF EXISTS public.bookings_vm CASCADE;
-DROP TABLE IF EXISTS public.activity_packages_vm CASCADE;
-DROP TABLE IF EXISTS public.activities_vm CASCADE;
-DROP TABLE IF EXISTS public.categories_vm CASCADE;
-DROP TABLE IF EXISTS public.customers_vm CASCADE;
-DROP TABLE IF EXISTS public.contact_messages_vm CASCADE;
-DROP TABLE IF EXISTS public.custom_quotes_vm CASCADE;
-DROP TABLE IF EXISTS public.fifa_experiences_vm CASCADE;
+DROP TABLE IF EXISTS public.booking_items_oasix CASCADE;
+DROP TABLE IF EXISTS public.cart_items_oasix CASCADE;
+DROP TABLE IF EXISTS public.bookings_oasix CASCADE;
+DROP TABLE IF EXISTS public.activity_packages_oasix CASCADE;
+DROP TABLE IF EXISTS public.activities_oasix CASCADE;
+DROP TABLE IF EXISTS public.categories_oasix CASCADE;
+DROP TABLE IF EXISTS public.customers_oasix CASCADE;
+DROP TABLE IF EXISTS public.contact_messages_oasix CASCADE;
+DROP TABLE IF EXISTS public.custom_quotes_oasix CASCADE;
+DROP TABLE IF EXISTS public.fifa_experiences_oasix CASCADE;
 
 -- =====================================================================================
 -- 2. CREACIÓN DE TABLAS ESTANDARIZADAS
 -- =====================================================================================
-CREATE TABLE public.categories_vm (
+CREATE TABLE public.categories_oasix (
   id SERIAL PRIMARY KEY,
   name VARCHAR NOT NULL,
   slug VARCHAR NOT NULL UNIQUE
 );
 
-CREATE TABLE public.activities_vm (
+CREATE TABLE public.activities_oasix (
   id SERIAL PRIMARY KEY,
   title VARCHAR NOT NULL,
   slug VARCHAR NOT NULL UNIQUE,
   description TEXT,
-  category_id INTEGER REFERENCES public.categories_vm(id),
+  category_id INTEGER REFERENCES public.categories_oasix(id),
   location VARCHAR,
   images JSONB,
   duration VARCHAR,
@@ -41,9 +41,9 @@ CREATE TABLE public.activities_vm (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE public.activity_packages_vm (
+CREATE TABLE public.activity_packages_oasix (
   id SERIAL PRIMARY KEY,
-  activity_id INTEGER REFERENCES public.activities_vm(id),
+  activity_id INTEGER REFERENCES public.activities_oasix(id),
   package_name VARCHAR NOT NULL, 
   price NUMERIC NOT NULL,
   features JSONB,
@@ -52,7 +52,7 @@ CREATE TABLE public.activity_packages_vm (
   is_active BOOLEAN DEFAULT TRUE
 );
 
-CREATE TABLE public.customers_vm (
+CREATE TABLE public.customers_oasix (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   first_name VARCHAR NOT NULL,
   last_name VARCHAR NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE public.customers_vm (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE public.custom_quotes_vm (
+CREATE TABLE public.custom_quotes_oasix (
   id SERIAL PRIMARY KEY,
   customer_name VARCHAR NOT NULL,
   customer_email VARCHAR NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE public.custom_quotes_vm (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE public.contact_messages_vm (
+CREATE TABLE public.contact_messages_oasix (
   id SERIAL PRIMARY KEY,
   full_name VARCHAR,
   phone VARCHAR,
@@ -84,19 +84,19 @@ CREATE TABLE public.contact_messages_vm (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE public.cart_items_vm (
+CREATE TABLE public.cart_items_oasix (
   id SERIAL PRIMARY KEY,
   session_id VARCHAR NOT NULL,
-  package_id INTEGER REFERENCES public.activity_packages_vm(id),
+  package_id INTEGER REFERENCES public.activity_packages_oasix(id),
   scheduled_date DATE NOT NULL,
   scheduled_time TIME,
   pax_qty INTEGER DEFAULT 1,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE public.bookings_vm (
+CREATE TABLE public.bookings_oasix (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  customer_id UUID REFERENCES public.customers_vm(id),
+  customer_id UUID REFERENCES public.customers_oasix(id),
   session_id VARCHAR, 
   total_amount NUMERIC NOT NULL,
   payment_status VARCHAR DEFAULT 'pending',
@@ -112,17 +112,17 @@ CREATE TABLE public.bookings_vm (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE public.booking_items_vm (
+CREATE TABLE public.booking_items_oasix (
   id SERIAL PRIMARY KEY,
-  booking_id UUID REFERENCES public.bookings_vm(id),
-  package_id INTEGER REFERENCES public.activity_packages_vm(id),
+  booking_id UUID REFERENCES public.bookings_oasix(id),
+  package_id INTEGER REFERENCES public.activity_packages_oasix(id),
   scheduled_date DATE NOT NULL,
   scheduled_time TIME,
   pax_qty INTEGER DEFAULT 1,
   unit_price NUMERIC NOT NULL
 );
 
-CREATE TABLE public.fifa_experiences_vm (
+CREATE TABLE public.fifa_experiences_oasix (
   id SERIAL PRIMARY KEY,
   title VARCHAR NOT NULL,
   subtitle VARCHAR,
@@ -135,32 +135,32 @@ CREATE TABLE public.fifa_experiences_vm (
 -- =====================================================================================
 -- 3. POLÍTICAS DE SEGURIDAD RLS
 -- =====================================================================================
-ALTER TABLE public.categories_vm ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.activities_vm ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.activity_packages_vm ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.fifa_experiences_vm ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.customers_vm ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.bookings_vm ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.booking_items_vm ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.custom_quotes_vm ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.contact_messages_vm ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.cart_items_vm ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.categories_oasix ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.activities_oasix ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.activity_packages_oasix ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.fifa_experiences_oasix ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.customers_oasix ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.bookings_oasix ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.booking_items_oasix ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.custom_quotes_oasix ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.contact_messages_oasix ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.cart_items_oasix ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Lectura pública catálogos" ON public.categories_vm FOR SELECT USING (true);
-CREATE POLICY "Lectura pública actividades" ON public.activities_vm FOR SELECT USING (true);
-CREATE POLICY "Lectura pública paquetes" ON public.activity_packages_vm FOR SELECT USING (true);
-CREATE POLICY "Lectura pública fifa" ON public.fifa_experiences_vm FOR SELECT USING (true);
-CREATE POLICY "Acceso total a clientes en checkout" ON public.customers_vm FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Acceso total a reservas en checkout" ON public.bookings_vm FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Acceso total a items de reserva" ON public.booking_items_vm FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Permitir inserción anónima cotizaciones" ON public.custom_quotes_vm FOR INSERT WITH CHECK (true);
-CREATE POLICY "Permitir inserción anónima contactos" ON public.contact_messages_vm FOR INSERT WITH CHECK (true);
-CREATE POLICY "Acceso total carrito" ON public.cart_items_vm FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Lectura pública catálogos" ON public.categories_oasix FOR SELECT USING (true);
+CREATE POLICY "Lectura pública actividades" ON public.activities_oasix FOR SELECT USING (true);
+CREATE POLICY "Lectura pública paquetes" ON public.activity_packages_oasix FOR SELECT USING (true);
+CREATE POLICY "Lectura pública fifa" ON public.fifa_experiences_oasix FOR SELECT USING (true);
+CREATE POLICY "Acceso total a clientes en checkout" ON public.customers_oasix FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Acceso total a reservas en checkout" ON public.bookings_oasix FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Acceso total a items de reserva" ON public.booking_items_oasix FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Permitir inserción anónima cotizaciones" ON public.custom_quotes_oasix FOR INSERT WITH CHECK (true);
+CREATE POLICY "Permitir inserción anónima contactos" ON public.contact_messages_oasix FOR INSERT WITH CHECK (true);
+CREATE POLICY "Acceso total carrito" ON public.cart_items_oasix FOR ALL USING (true) WITH CHECK (true);
 
 -- =====================================================================================
 -- 4. INSERTAR CATEGORÍAS
 -- =====================================================================================
-INSERT INTO public.categories_vm (name, slug) VALUES 
+INSERT INTO public.categories_oasix (name, slug) VALUES 
 ('Tours Urbanos', 'tours-urbanos'),
 ('Clases y Talleres', 'clases-talleres'),
 ('Experiencias Acuáticas', 'experiencias-acuaticas'),
@@ -169,7 +169,7 @@ INSERT INTO public.categories_vm (name, slug) VALUES
 -- =====================================================================================
 -- 5. INSERTAR 19 EXPERIENCIAS GASTRONÓMICAS
 -- =====================================================================================
-INSERT INTO public.activities_vm (title, slug, category_id, location, duration, description, images, included_general, important_info) VALUES
+INSERT INTO public.activities_oasix (title, slug, category_id, location, duration, description, images, included_general, important_info) VALUES
 (
   'Plan Gastronómico "Sabor Local" y Tour San Rafael & Mercado Tacuba', 
   'sabor-local-san-rafael', 1, 'Entrada principal del Mercado San Rafael', '3 horas aproximadamente', 
@@ -326,108 +326,108 @@ INSERT INTO public.activities_vm (title, slug, category_id, location, duration, 
 -- =====================================================================================
 -- 6. INSERTAR PAQUETES DE PRECIOS EXACTOS
 -- =====================================================================================
-INSERT INTO public.activity_packages_vm (activity_id, package_name, price, min_pax, max_pax) VALUES
+INSERT INTO public.activity_packages_oasix (activity_id, package_name, price, min_pax, max_pax) VALUES
 -- 1. Sabor Local San Rafael
-((SELECT id FROM public.activities_vm WHERE slug='sabor-local-san-rafael'), '1 - 3 personas', 1670.00, 1, 3),
-((SELECT id FROM public.activities_vm WHERE slug='sabor-local-san-rafael'), '4 - 6 personas', 1450.00, 4, 6),
-((SELECT id FROM public.activities_vm WHERE slug='sabor-local-san-rafael'), '7+ personas', 1230.00, 7, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='sabor-local-san-rafael'), '1 - 3 personas', 1670.00, 1, 3),
+((SELECT id FROM public.activities_oasix WHERE slug='sabor-local-san-rafael'), '4 - 6 personas', 1450.00, 4, 6),
+((SELECT id FROM public.activities_oasix WHERE slug='sabor-local-san-rafael'), '7+ personas', 1230.00, 7, 20),
 
 -- 2. Cocina Abierta Gourmet
-((SELECT id FROM public.activities_vm WHERE slug='cocina-abierta-gourmet'), '1 - 3 personas', 1950.00, 1, 3),
-((SELECT id FROM public.activities_vm WHERE slug='cocina-abierta-gourmet'), '4 - 6 personas', 1600.00, 4, 6),
-((SELECT id FROM public.activities_vm WHERE slug='cocina-abierta-gourmet'), '7+ personas', 1430.00, 7, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='cocina-abierta-gourmet'), '1 - 3 personas', 1950.00, 1, 3),
+((SELECT id FROM public.activities_oasix WHERE slug='cocina-abierta-gourmet'), '4 - 6 personas', 1600.00, 4, 6),
+((SELECT id FROM public.activities_oasix WHERE slug='cocina-abierta-gourmet'), '7+ personas', 1430.00, 7, 20),
 
 -- 3. Master Class Churros
-((SELECT id FROM public.activities_vm WHERE slug='master-class-churros'), '1 - 3 personas', 1500.00, 1, 3),
-((SELECT id FROM public.activities_vm WHERE slug='master-class-churros'), '4 - 6 personas', 1300.00, 4, 6),
-((SELECT id FROM public.activities_vm WHERE slug='master-class-churros'), '7+ personas', 1050.00, 7, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='master-class-churros'), '1 - 3 personas', 1500.00, 1, 3),
+((SELECT id FROM public.activities_oasix WHERE slug='master-class-churros'), '4 - 6 personas', 1300.00, 4, 6),
+((SELECT id FROM public.activities_oasix WHERE slug='master-class-churros'), '7+ personas', 1050.00, 7, 20),
 
 -- 4. Fiesta Xochimilca
-((SELECT id FROM public.activities_vm WHERE slug='fiesta-xochimilca-trajinera'), '1 - 3 personas', 900.00, 1, 3),
-((SELECT id FROM public.activities_vm WHERE slug='fiesta-xochimilca-trajinera'), '4 - 6 personas', 850.00, 4, 6),
-((SELECT id FROM public.activities_vm WHERE slug='fiesta-xochimilca-trajinera'), '7+ personas', 750.00, 7, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='fiesta-xochimilca-trajinera'), '1 - 3 personas', 900.00, 1, 3),
+((SELECT id FROM public.activities_oasix WHERE slug='fiesta-xochimilca-trajinera'), '4 - 6 personas', 850.00, 4, 6),
+((SELECT id FROM public.activities_oasix WHERE slug='fiesta-xochimilca-trajinera'), '7+ personas', 750.00, 7, 20),
 
 -- 5. Ranchero Ajusco
-((SELECT id FROM public.activities_vm WHERE slug='ranchero-capitalino-ajusco'), '1 - 4 personas', 1250.00, 1, 4),
-((SELECT id FROM public.activities_vm WHERE slug='ranchero-capitalino-ajusco'), '5 - 6 personas', 1000.00, 5, 6),
-((SELECT id FROM public.activities_vm WHERE slug='ranchero-capitalino-ajusco'), '7+ personas', 875.00, 7, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='ranchero-capitalino-ajusco'), '1 - 4 personas', 1250.00, 1, 4),
+((SELECT id FROM public.activities_oasix WHERE slug='ranchero-capitalino-ajusco'), '5 - 6 personas', 1000.00, 5, 6),
+((SELECT id FROM public.activities_oasix WHERE slug='ranchero-capitalino-ajusco'), '7+ personas', 875.00, 7, 20),
 
 -- 6. Aventura Pirata
-((SELECT id FROM public.activities_vm WHERE slug='aventura-pirata-cabos'), '1 - 3 personas', 1900.00, 1, 3),
-((SELECT id FROM public.activities_vm WHERE slug='aventura-pirata-cabos'), '4 - 6 personas', 1850.00, 4, 6),
-((SELECT id FROM public.activities_vm WHERE slug='aventura-pirata-cabos'), '7+ personas', 1700.00, 7, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='aventura-pirata-cabos'), '1 - 3 personas', 1900.00, 1, 3),
+((SELECT id FROM public.activities_oasix WHERE slug='aventura-pirata-cabos'), '4 - 6 personas', 1850.00, 4, 6),
+((SELECT id FROM public.activities_oasix WHERE slug='aventura-pirata-cabos'), '7+ personas', 1700.00, 7, 20),
 
 -- 7. Sabores Nocturnos San Miguel
-((SELECT id FROM public.activities_vm WHERE slug='sabores-nocturnos-san-miguel'), '1 - 3 personas', 1600.00, 1, 3),
-((SELECT id FROM public.activities_vm WHERE slug='sabores-nocturnos-san-miguel'), '4 - 6 personas', 1500.00, 4, 6),
-((SELECT id FROM public.activities_vm WHERE slug='sabores-nocturnos-san-miguel'), '7+ personas', 1320.00, 7, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='sabores-nocturnos-san-miguel'), '1 - 3 personas', 1600.00, 1, 3),
+((SELECT id FROM public.activities_oasix WHERE slug='sabores-nocturnos-san-miguel'), '4 - 6 personas', 1500.00, 4, 6),
+((SELECT id FROM public.activities_oasix WHERE slug='sabores-nocturnos-san-miguel'), '7+ personas', 1320.00, 7, 20),
 
 -- 8. Clase Cocina Mexicana San Miguel
-((SELECT id FROM public.activities_vm WHERE slug='clase-cocina-mexicana-san-miguel'), '1 - 3 personas', 3500.00, 1, 3),
-((SELECT id FROM public.activities_vm WHERE slug='clase-cocina-mexicana-san-miguel'), '4 - 6 personas', 3400.00, 4, 6),
-((SELECT id FROM public.activities_vm WHERE slug='clase-cocina-mexicana-san-miguel'), '7+ personas', 3150.00, 7, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='clase-cocina-mexicana-san-miguel'), '1 - 3 personas', 3500.00, 1, 3),
+((SELECT id FROM public.activities_oasix WHERE slug='clase-cocina-mexicana-san-miguel'), '4 - 6 personas', 3400.00, 4, 6),
+((SELECT id FROM public.activities_oasix WHERE slug='clase-cocina-mexicana-san-miguel'), '7+ personas', 3150.00, 7, 20),
 
 -- 9. Tacos y Tequila San Miguel
-((SELECT id FROM public.activities_vm WHERE slug='tacos-tequila-san-miguel'), '1 - 3 personas', 1680.00, 1, 3),
-((SELECT id FROM public.activities_vm WHERE slug='tacos-tequila-san-miguel'), '4 - 6 personas', 1500.00, 4, 6),
-((SELECT id FROM public.activities_vm WHERE slug='tacos-tequila-san-miguel'), '7+ personas', 1350.00, 7, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='tacos-tequila-san-miguel'), '1 - 3 personas', 1680.00, 1, 3),
+((SELECT id FROM public.activities_oasix WHERE slug='tacos-tequila-san-miguel'), '4 - 6 personas', 1500.00, 4, 6),
+((SELECT id FROM public.activities_oasix WHERE slug='tacos-tequila-san-miguel'), '7+ personas', 1350.00, 7, 20),
 
 -- 10. Sabores de Oaxaca
-((SELECT id FROM public.activities_vm WHERE slug='sabores-oaxaca-experiencia'), '1 - 3 personas', 4600.00, 1, 3),
-((SELECT id FROM public.activities_vm WHERE slug='sabores-oaxaca-experiencia'), '4 - 6 personas', 4450.00, 4, 6),
-((SELECT id FROM public.activities_vm WHERE slug='sabores-oaxaca-experiencia'), '7+ personas', 4380.00, 7, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='sabores-oaxaca-experiencia'), '1 - 3 personas', 4600.00, 1, 3),
+((SELECT id FROM public.activities_oasix WHERE slug='sabores-oaxaca-experiencia'), '4 - 6 personas', 4450.00, 4, 6),
+((SELECT id FROM public.activities_oasix WHERE slug='sabores-oaxaca-experiencia'), '7+ personas', 4380.00, 7, 20),
 
 -- 11. Raíces del Agave Puerto Escondido
-((SELECT id FROM public.activities_vm WHERE slug='raices-agave-mezcal-puerto-escondido'), '1 persona', 1500.00, 1, 1),
-((SELECT id FROM public.activities_vm WHERE slug='raices-agave-mezcal-puerto-escondido'), '2 personas', 1400.00, 2, 2),
-((SELECT id FROM public.activities_vm WHERE slug='raices-agave-mezcal-puerto-escondido'), '3 - 4 personas', 1300.00, 3, 4),
-((SELECT id FROM public.activities_vm WHERE slug='raices-agave-mezcal-puerto-escondido'), '5+ personas', 1200.00, 5, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='raices-agave-mezcal-puerto-escondido'), '1 persona', 1500.00, 1, 1),
+((SELECT id FROM public.activities_oasix WHERE slug='raices-agave-mezcal-puerto-escondido'), '2 personas', 1400.00, 2, 2),
+((SELECT id FROM public.activities_oasix WHERE slug='raices-agave-mezcal-puerto-escondido'), '3 - 4 personas', 1300.00, 3, 4),
+((SELECT id FROM public.activities_oasix WHERE slug='raices-agave-mezcal-puerto-escondido'), '5+ personas', 1200.00, 5, 20),
 
 -- 12. Aventura Mexicana Caballo y Tequila
-((SELECT id FROM public.activities_vm WHERE slug='aventura-mexicana-caballo-tequila'), '1 persona', 2100.00, 1, 1),
-((SELECT id FROM public.activities_vm WHERE slug='aventura-mexicana-caballo-tequila'), '2 personas', 2000.00, 2, 2),
-((SELECT id FROM public.activities_vm WHERE slug='aventura-mexicana-caballo-tequila'), '3 - 4 personas', 1850.00, 3, 4),
-((SELECT id FROM public.activities_vm WHERE slug='aventura-mexicana-caballo-tequila'), '5+ personas', 1700.00, 5, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='aventura-mexicana-caballo-tequila'), '1 persona', 2100.00, 1, 1),
+((SELECT id FROM public.activities_oasix WHERE slug='aventura-mexicana-caballo-tequila'), '2 personas', 2000.00, 2, 2),
+((SELECT id FROM public.activities_oasix WHERE slug='aventura-mexicana-caballo-tequila'), '3 - 4 personas', 1850.00, 3, 4),
+((SELECT id FROM public.activities_oasix WHERE slug='aventura-mexicana-caballo-tequila'), '5+ personas', 1700.00, 5, 20),
 
 -- 13. Navegando Sabores Yate y Snorkel
-((SELECT id FROM public.activities_vm WHERE slug='navegando-sabores-yate-snorkel'), '1 persona', 4500.00, 1, 1),
-((SELECT id FROM public.activities_vm WHERE slug='navegando-sabores-yate-snorkel'), '2 personas', 4350.00, 2, 2),
-((SELECT id FROM public.activities_vm WHERE slug='navegando-sabores-yate-snorkel'), '3 - 4 personas', 4200.00, 3, 4),
-((SELECT id FROM public.activities_vm WHERE slug='navegando-sabores-yate-snorkel'), '5+ personas', 4000.00, 5, 40),
+((SELECT id FROM public.activities_oasix WHERE slug='navegando-sabores-yate-snorkel'), '1 persona', 4500.00, 1, 1),
+((SELECT id FROM public.activities_oasix WHERE slug='navegando-sabores-yate-snorkel'), '2 personas', 4350.00, 2, 2),
+((SELECT id FROM public.activities_oasix WHERE slug='navegando-sabores-yate-snorkel'), '3 - 4 personas', 4200.00, 3, 4),
+((SELECT id FROM public.activities_oasix WHERE slug='navegando-sabores-yate-snorkel'), '5+ personas', 4000.00, 5, 40),
 
 -- 14. Amanecer Selva Desayuno Flotante
-((SELECT id FROM public.activities_vm WHERE slug='amanecer-selva-desayuno-flotante'), '1 persona', 6500.00, 1, 1),
-((SELECT id FROM public.activities_vm WHERE slug='amanecer-selva-desayuno-flotante'), '2 personas', 6400.00, 2, 2),
-((SELECT id FROM public.activities_vm WHERE slug='amanecer-selva-desayuno-flotante'), '3 - 4 personas', 6250.00, 3, 4),
-((SELECT id FROM public.activities_vm WHERE slug='amanecer-selva-desayuno-flotante'), '5+ personas', 6100.00, 5, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='amanecer-selva-desayuno-flotante'), '1 persona', 6500.00, 1, 1),
+((SELECT id FROM public.activities_oasix WHERE slug='amanecer-selva-desayuno-flotante'), '2 personas', 6400.00, 2, 2),
+((SELECT id FROM public.activities_oasix WHERE slug='amanecer-selva-desayuno-flotante'), '3 - 4 personas', 6250.00, 3, 4),
+((SELECT id FROM public.activities_oasix WHERE slug='amanecer-selva-desayuno-flotante'), '5+ personas', 6100.00, 5, 20),
 
 -- 15. Sabor Maya Clase Cocina Playa del Carmen
-((SELECT id FROM public.activities_vm WHERE slug='sabor-maya-clase-cocina'), '1 persona', 2900.00, 1, 1),
-((SELECT id FROM public.activities_vm WHERE slug='sabor-maya-clase-cocina'), '2 personas', 2800.00, 2, 2),
-((SELECT id FROM public.activities_vm WHERE slug='sabor-maya-clase-cocina'), '3+ personas', 2690.00, 3, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='sabor-maya-clase-cocina'), '1 persona', 2900.00, 1, 1),
+((SELECT id FROM public.activities_oasix WHERE slug='sabor-maya-clase-cocina'), '2 personas', 2800.00, 2, 2),
+((SELECT id FROM public.activities_oasix WHERE slug='sabor-maya-clase-cocina'), '3+ personas', 2690.00, 3, 20),
 
 -- 16. Sabores Locales Cancún
-((SELECT id FROM public.activities_vm WHERE slug='sabores-locales-cancun'), '1 persona', 1600.00, 1, 1),
-((SELECT id FROM public.activities_vm WHERE slug='sabores-locales-cancun'), '2 personas', 1550.00, 2, 2),
-((SELECT id FROM public.activities_vm WHERE slug='sabores-locales-cancun'), '3 - 4 personas', 1400.00, 3, 4),
-((SELECT id FROM public.activities_vm WHERE slug='sabores-locales-cancun'), '5+ personas', 1300.00, 5, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='sabores-locales-cancun'), '1 persona', 1600.00, 1, 1),
+((SELECT id FROM public.activities_oasix WHERE slug='sabores-locales-cancun'), '2 personas', 1550.00, 2, 2),
+((SELECT id FROM public.activities_oasix WHERE slug='sabores-locales-cancun'), '3 - 4 personas', 1400.00, 3, 4),
+((SELECT id FROM public.activities_oasix WHERE slug='sabores-locales-cancun'), '5+ personas', 1300.00, 5, 20),
 
 -- 17. Paraíso Privado Club Playa
-((SELECT id FROM public.activities_vm WHERE slug='paraiso-privado-club-playa-costa-maya'), '1 - 4 personas', 6475.00, 1, 4),
-((SELECT id FROM public.activities_vm WHERE slug='paraiso-privado-club-playa-costa-maya'), '5+ personas', 3916.00, 5, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='paraiso-privado-club-playa-costa-maya'), '1 - 4 personas', 6475.00, 1, 4),
+((SELECT id FROM public.activities_oasix WHERE slug='paraiso-privado-club-playa-costa-maya'), '5+ personas', 3916.00, 5, 20),
 
 -- 18. Navegando Sabores Tour Privado Yate Isla Mujeres
-((SELECT id FROM public.activities_vm WHERE slug='yate-privado-isla-mujeres'), '1 - 4 personas', 8850.00, 1, 4),
-((SELECT id FROM public.activities_vm WHERE slug='yate-privado-isla-mujeres'), '5+ personas', 5683.00, 5, 20),
+((SELECT id FROM public.activities_oasix WHERE slug='yate-privado-isla-mujeres'), '1 - 4 personas', 8850.00, 1, 4),
+((SELECT id FROM public.activities_oasix WHERE slug='yate-privado-isla-mujeres'), '5+ personas', 5683.00, 5, 20),
 
 -- 19. Ritmos del Mar Crucero Atardecer
-((SELECT id FROM public.activities_vm WHERE slug='ritmos-del-mar-crucero-vallarta'), '1 - 3 personas', 5800.00, 1, 3),
-((SELECT id FROM public.activities_vm WHERE slug='ritmos-del-mar-crucero-vallarta'), '4 - 6 personas', 5600.00, 4, 6),
-((SELECT id FROM public.activities_vm WHERE slug='ritmos-del-mar-crucero-vallarta'), '7+ personas', 5430.00, 7, 20);
+((SELECT id FROM public.activities_oasix WHERE slug='ritmos-del-mar-crucero-vallarta'), '1 - 3 personas', 5800.00, 1, 3),
+((SELECT id FROM public.activities_oasix WHERE slug='ritmos-del-mar-crucero-vallarta'), '4 - 6 personas', 5600.00, 4, 6),
+((SELECT id FROM public.activities_oasix WHERE slug='ritmos-del-mar-crucero-vallarta'), '7+ personas', 5430.00, 7, 20);
 
 -- =====================================================================================
 -- 7. INSERTAR DETALLES MUNDIAL
 -- =====================================================================================
-INSERT INTO public.fifa_experiences_vm (title, subtitle, description, items, image_url, order_index) VALUES
+INSERT INTO public.fifa_experiences_oasix (title, subtitle, description, items, image_url, order_index) VALUES
 ('Experiencias Culinarias VIP', 'Acceso Exclusivo', 'Degustaciones de alto nivel en recintos privados durante los partidos clave.', '["Cenas maridaje con chefs reconocidos", "Acceso a zonas VIP", "Servicio de mixología de autor"]', 'https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=2070', 1),
 ('Viewing Parties Gourmet', 'Eventos en Vivo', 'Proyección de partidos en entornos de lujo con catering ininterrumpido.', '["Pantallas gigantes 4K", "Estaciones de comida en vivo", "Ambiente selecto y privado"]', 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070', 2);

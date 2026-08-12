@@ -117,7 +117,7 @@ export interface CartItem {
   id?: number; 
   sessionId?: string; 
   packageId: number; 
-  experience: Experience; // <--- Ahora aceptará perfectamente la experiencia de la página
+  experience: Experience; 
   levelName: string; 
   date: string; 
   time?: string; 

@@ -19,7 +19,7 @@ const getKeycopHeaders = (extraHeaders = {}) => ({
   'Content-Type': 'application/json',
   'Accept': 'application/json',
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-  'Origin': 'https://horizontrip.com.mx', 
+  'Origin': 'https://oasix.com.mx', 
   ...extraHeaders
 });
 
@@ -112,7 +112,7 @@ export async function POST(req: Request) {
         cvv: cardInfo.cvv.replace(/\s/g, '')
       },
       items: keycopItems,
-      redirectUrl: 'https://horizontrip.com.mx' 
+      redirectUrl: 'https://oasix.com.mx' 
     };
 
     const saleData = await safeKeycopFetch(`${KEYCOP_BASE_URL}/sale`, {
@@ -200,8 +200,8 @@ export async function POST(req: Request) {
     const currentLocale = String(locale || 'es').toLowerCase();
     const isEnglish = currentLocale.startsWith('en');
     const subjectClient = isEnglish 
-      ? `Booking Confirmation - Thank you for traveling with HorizonTrip` 
-      : `Confirmación de Reserva - Gracias por viajar con HorizonTrip`;
+      ? `Booking Confirmation - Thank you for traveling with Oasix` 
+      : `Confirmación de Reserva - Gracias por viajar con Oasix`;
 
     const greeting = isEnglish ? `Hello ${contactInfo.firstName},` : `Estimado/a ${contactInfo.firstName},`;
     const confirmationText = isEnglish ? "Your dossier has been confirmed and your payment was successfully processed." : "Tu dossier ha sido confirmado y el pago se procesó exitosamente.";
@@ -219,7 +219,7 @@ export async function POST(req: Request) {
     const htmlClient = `
         <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; max-width: 600px; margin: auto; color: ${fgDeepJungle}; border: 1px solid ${borderGreen}; border-radius: 12px; overflow: hidden; background-color: ${bgSand};">
           <div style="background-color: ${fgDeepJungle}; padding: 50px 30px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; font-family: 'Archivo', sans-serif;">HORIZON<span style="font-style: italic; color: ${primaryTurquoise}; font-weight: 300;">TRIP.</span></h1>
+            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; font-family: 'Archivo', sans-serif;">OASIX</h1>
           </div>
           <div style="padding: 50px 40px; background-color: #ffffff;">
             <h2 style="color: ${fgDeepJungle}; margin-top: 0; font-size: 22px; font-weight: normal; font-family: 'Archivo', sans-serif;">${greeting}</h2>
@@ -277,7 +277,7 @@ export async function POST(req: Request) {
     `;
 
     await resend.emails.send({
-      from: 'HorizonTrip Concierge <hola@horizontrip.com.mx>', 
+      from: 'OASIX  <atencion@oasix.com.mx>', 
       to: [contactInfo.email], 
       subject: subjectClient,
       html: htmlClient,
@@ -289,7 +289,7 @@ export async function POST(req: Request) {
     const htmlInternal = `
       <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: ${fgDeepJungle};">
         <h2 style="color: ${fgDeepJungle}; font-family: 'Archivo', sans-serif;">¡Nuevo Dossier Confirmado! (Vía Keycop)</h2>
-        <p>Se ha procesado un pago exitoso a través de la plataforma HorizonTrip.</p>
+        <p>Se ha procesado un pago exitoso a través de la plataforma Oasix.</p>
         <hr style="border: none; border-top: 1px solid ${borderGreen};" />
         <p><strong>Valor de Inversión:</strong> <span style="color: ${primaryTurquoise}; font-weight: bold;">${formattedTotal}</span></p>
         <p><strong>ID Transacción (Keycop):</strong> ${saleData.transactionId || saleData.authorizationNumber}</p>
@@ -311,8 +311,8 @@ export async function POST(req: Request) {
     `;
 
     await resend.emails.send({
-      from: 'Sistema HorizonTrip <hola@horizontrip.com.mx>',
-      to: ['hola@horizontrip.com.mx'],
+      from: 'Sistema Oasix <atencion@oasix.com.mx>',
+      to: ['atencion@oasix.com.mx'],
       subject: subjectInternal,
       html: htmlInternal,
     });

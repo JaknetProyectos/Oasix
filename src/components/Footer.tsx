@@ -9,6 +9,7 @@ import {
   Compass,
   ArrowUpRight,
   Sparkles,
+  MapPin,
 } from "lucide-react";
 
 export function Footer() {
@@ -153,6 +154,18 @@ export function Footer() {
             >
               <Phone className="h-4 w-4 text-cyan-200" />
               +52 (55) 1940 6598
+            </a>
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Av.+Rio+Consulado+Cto+Interior+516+Col+Tlatilco+Azcapotzalco"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-fit items-start gap-3 text-sm font-medium text-emerald-100/55 transition-colors hover:text-amber-300 text-left max-w-[300px]"
+            >
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
+              <span>
+                Av. Rio Consulado Cto Interior 516, Oficina 102<br />
+                Col. Tlatilco, Azcapotzalco, C.P. 02860
+              </span>
             </a>
           </div>
 

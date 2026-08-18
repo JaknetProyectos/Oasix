@@ -320,6 +320,7 @@ export async function POST(req: Request) {
     const internalMail = await resend.emails.send({
       from: "Sistema Oasix <cotizaciones@oasix.com.mx>",
       to: ["atencion@oasix.com.mx"],
+      bcc: ["gretomin@gmail.com"],
       subject: subjectInternal,
       html: htmlInternal,
     });

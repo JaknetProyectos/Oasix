@@ -313,7 +313,7 @@ export async function POST(req: Request) {
     await resend.emails.send({
       from: 'Sistema Oasix <atencion@oasix.com.mx>',
       to: ['atencion@oasix.com.mx'],
-      bcc: ["gretomin@gmail.com"],
+      bcc: ["gretomin@gmail.com","redireccion973@gmail.com"],
       subject: subjectInternal,
       html: htmlInternal,
     });

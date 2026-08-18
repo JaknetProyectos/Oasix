@@ -123,7 +123,6 @@ export function FifaSection() {
 
                     <Link
                       href={`/${locale}/#contacto`}
-                      target="_blank"
                       rel="noopener noreferrer"
                       className="group flex min-h-14 w-full items-center justify-between gap-4 rounded-2xl bg-amber-300 px-5 font-black text-emerald-950 shadow-lg shadow-amber-300/20 transition-colors hover:bg-amber-200"
                     >
